@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI 原生组织成熟度自测 · 五级六维</title>
+
+<!--
+  ┌───────────────────────────────────────────────────────────────┐
+  │  会灵那 · AI 原生组织成熟度诊断器（开源诊断层）                    │
+  │  模型：五级（围观/散点/流程融合/系统化/原生）× 六维度              │
+  │  评分：总水位 = 六维里最低的那个（最短板定级 / 木桶原理）           │
+  │                                                                │
+  │  要改内容：只改下面 <script> 里的 LEVEL_NAMES / DIMENSIONS /     │
+  │  VERDICTS 三块。改完刷新即可。                                    │
+  └───────────────────────────────────────────────────────────────┘
+-->
+
+<style>
+  :root{
+    --paper:#F4F5F1; --ink:#1B1E1C; --ink-soft:#5C635B;
+    --line:#D7DBD1; --line-strong:#C2C8BC;
+    --celadon:#3A7D6E; --celadon-deep:#27574C; --celadon-soft:#CFE1D9;
+    --cinnabar:#BD4A2B; --cinnabar-soft:#EBCABE; --gray-bar:#A7AEA4;
+    --serif:"Songti SC","STSong","Source Han Serif SC",Georgia,"Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:720px;margin:0 auto;padding:56px 24px 80px}
+
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--celadon-deep);display:flex;align-items:center;gap:10px;margin-bottom:22px;flex-wrap:wrap}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,6.4vw,46px);line-height:1.2;letter-spacing:.01em;margin:0 0 18px}
+  h1 .mark{color:var(--cinnabar);border-bottom:2px solid var(--cinnabar-soft);padding-bottom:1px}
+  .lede{font-size:17px;color:var(--ink-soft);max-width:44ch;margin:0 0 8px}
+  .scale-key{font-family:var(--mono);font-size:12.5px;color:var(--ink-soft);margin-top:18px;line-height:1.9}
+  .scale-key b{color:var(--celadon-deep)}
+  .rule{height:1px;background:var(--line-strong);margin:38px 0}
+
+  fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:26px 0 4px}
+  fieldset:first-of-type{border-top:0;padding-top:6px}
+  legend{padding:0;width:100%}
+  .dim-head{display:flex;align-items:baseline;gap:12px;margin-bottom:2px}
+  .dim-no{font-family:var(--mono);font-size:13px;color:var(--celadon);min-width:24px}
+  .dim-name{font-family:var(--serif);font-size:21px;font-weight:600}
+  .dim-current{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--ink-soft);min-height:1em;text-align:right}
+  .dim-current b{color:var(--cinnabar);font-weight:600}
+  .dim-tip{font-size:13.5px;color:var(--ink-soft);margin:0 0 4px;font-style:italic}
+
+  .levels{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:8px}
+  .levels li{margin:0}
+  .lvl{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:6px;padding:11px 14px;cursor:pointer;transition:border-color .15s ease,background .15s ease}
+  .lvl:hover{border-color:var(--line-strong);background:#FBFCFA}
+  .lvl input{position:absolute;opacity:0;width:0;height:0}
+  .tick{flex:none;margin-top:1px;font-family:var(--mono);font-size:11px;font-weight:600;color:var(--celadon-deep);border:1px solid var(--line-strong);border-radius:3px;padding:1px 6px;min-width:30px;text-align:center;transition:all .15s ease}
+  .lvl-text{font-size:14.5px;color:var(--ink)}
+  .lvl:has(input:focus-visible){outline:2px solid var(--celadon);outline-offset:2px}
+  .lvl:has(input:checked){border-color:var(--celadon);background:#EFF5F2}
+  .lvl:has(input:checked) .tick{background:var(--celadon);color:#fff;border-color:var(--celadon)}
+
+  .actions{margin:40px 0 0;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  .btn{font-family:var(--sans);font-size:15px;font-weight:600;border:0;border-radius:6px;padding:13px 26px;cursor:pointer;transition:background .15s ease,transform .05s ease}
+  .btn-primary{background:var(--celadon);color:#fff}
+  .btn-primary:hover{background:var(--celadon-deep)}
+  .btn-primary:active{transform:translateY(1px)}
+  .btn-ghost{background:transparent;color:var(--ink-soft);padding:13px 4px;font-weight:500}
+  .btn-ghost:hover{color:var(--ink)}
+  .hint{font-size:13px;color:var(--cinnabar);font-family:var(--mono);min-height:1em}
+
+  .result{margin-top:8px}
+  .result[hidden]{display:none}
+  .result-card{margin-top:44px;border:1px solid var(--line-strong);border-radius:10px;background:#fff;padding:30px 28px}
+  .waterline-label{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px}
+  .level-big{display:flex;align-items:baseline;gap:14px;margin-bottom:4px;flex-wrap:wrap}
+  .level-big .lv{font-family:var(--mono);font-weight:700;font-size:64px;line-height:1;color:var(--celadon-deep)}
+  .level-big .lv .n{color:var(--cinnabar)}
+  .level-big .cap{font-family:var(--serif);font-size:20px;font-weight:600}
+  .barrier{font-size:14px;color:var(--ink-soft);margin:2px 0 22px}
+
+  svg{display:block;width:100%;height:auto;margin:6px 0 8px;overflow:visible}
+  .bar{transition:transform .7s cubic-bezier(.2,.8,.2,1);transform-box:fill-box;transform-origin:bottom;transform:scaleY(0)}
+  .result.show .bar{transform:scaleY(1)}
+  .wline{opacity:0;transition:opacity .5s ease .55s}
+  .result.show .wline{opacity:1}
+  .blabel{font-family:var(--sans);font-size:12.5px;fill:#5C635B}
+  .bval{font-family:var(--mono);font-size:12px;fill:#27574C;font-weight:600}
+  .bval.weak{fill:#BD4A2B}
+
+  .verdict{font-size:15.5px;color:var(--ink);margin:8px 0 0}
+  .weak-row{margin:22px 0 0;padding:16px 18px;border-radius:8px;background:#FBF1ED;border:1px solid var(--cinnabar-soft)}
+  .weak-row .k{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--cinnabar);display:block;margin-bottom:5px}
+  .weak-row .names{font-family:var(--serif);font-size:18px;font-weight:600;margin-bottom:6px}
+  .weak-row .moat{font-size:14px;color:var(--ink-soft)}
+
+  .cta{margin-top:26px;padding-top:24px;border-top:1px solid var(--line);font-size:15px;color:var(--ink-soft)}
+  .cta b{color:var(--ink)}
+  .cta a{color:var(--celadon-deep);text-decoration:none;border-bottom:1px solid var(--celadon-soft);font-weight:600}
+  .cta a:hover{border-color:var(--celadon)}
+
+  footer{margin-top:60px;font-size:12.5px;color:var(--ink-soft);font-family:var(--mono);line-height:1.9}
+  footer .sig{color:var(--celadon-deep);font-weight:600}
+
+  @media (prefers-reduced-motion:reduce){
+    .bar{transition:none;transform:scaleY(1)}
+    .wline{transition:none;opacity:1}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">AI 原生组织成熟度自测 · 五级六维</div>
+  <h1>你的 AI 成熟度，<br>等于你<span class="mark">最弱的那一环</span>。</h1>
+  <p class="lede">六个维度，每个判断你现在落在哪一级。系统按“最短板”给你真实水位——因为 AI 落地是一条连环锁，一维卡住，整盘卡住，平均分只会把这个结构性短板盖住。</p>
+  <div class="scale-key">
+    五级阶梯：<b>L1 围观</b> → <b>L2 散点</b> → ⟍ 价值分水岭 ⟍ → <b>L3 流程融合</b> → <b>L4 系统化</b> → <b>L5 原生</b><br>
+    L1–L2 只是“在试”，L3 起 AI 才真在组织里干活。
+  </div>
+
+  <div class="rule"></div>
+
+  <form id="quiz" novalidate></form>
+
+  <div class="actions">
+    <button type="button" class="btn btn-primary" id="run">测算我的真实水位</button>
+    <button type="button" class="btn btn-ghost" id="reset" hidden>重新测算</button>
+    <span class="hint" id="hint"></span>
+  </div>
+
+  <section class="result" id="result" hidden aria-live="polite">
+    <div class="result-card">
+      <div class="waterline-label">你的真实水位（取最低维 · 木桶原理）</div>
+      <div class="level-big">
+        <span class="lv">L<span class="n" id="r-level">·</span></span>
+        <span class="cap" id="r-cap"></span>
+      </div>
+      <div class="barrier" id="r-barrier"></div>
+
+      <svg id="chart" viewBox="0 0 600 340" role="img" aria-label="六维度水位图"></svg>
+
+      <p class="verdict" id="r-verdict"></p>
+
+      <div class="weak-row">
+        <span class="k">最短板 · 下一步先补这里</span>
+        <div class="names" id="r-weak"></div>
+        <div class="moat" id="r-moat"></div>
+      </div>
+
+      <div class="cta">
+        <b>模型负责定位“你在哪”，方法论负责开方“往哪走”。</b><br>
+        想知道怎么从 L<span id="r-from">·</span> 爬到 L<span id="r-to">·</span>？往上一层是六阶段落地方法论与陪跑——<a href="#" id="cta-link">查看方法论 / 找我陪跑 →</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span class="sig">会灵那 · wilingna</span> ｜ 开源「诊断层」 · 方法论层与落地层另有其层<br>
+    成熟度模型回答“我现在在哪”，六阶段方法论回答“下一步往哪走”
+  </footer>
+
+</div>
+
+<script>
+/* ===== 只改这三块 ===== */
+
+const LEVEL_NAMES = ["围观","散点","流程融合","系统化","原生"];
+
+// 六个维度，levels 从 L1 到 L5。tip = 你的“一眼判断口诀”。
+const DIMENSIONS = [
+  { no:"01", name:"一号位与方向", short:"方向", moat:"组织决心",
+    tip:"看老板自己用不用、能不能一句话说清“我们要拿 AI 干什么”。",
+    levels:[
+      "老板知道 AI 重要，但说不出“我们要拿它干什么”",
+      "老板嘴上支持，自己几乎从不打开（L2 封顶）",
+      "老板自己在用，能一句话说清 AI 目标，有专人对方向负责",
+      "一号位亲自推动，AI 目标进了核心 KPI 与资源分配",
+      "AI 是公司战略的默认前提，重大决策默认先问“AI 能不能做”"
+    ]},
+  { no:"02", name:"知识与数据", short:"知识", moat:"数据飞轮",
+    tip:"看核心经验是散在老员工脑子里，还是已结构化、AI 调得到。",
+    levels:[
+      "核心经验全散在老员工脑子里，没人打捞",
+      "有零散文档，但分散在各处、AI 调不动",
+      "关键知识被结构化、沉淀进知识库，AI 能调得到",
+      "知识可被 agent 直接调用、跨场景复用",
+      "数据飞轮成型，越用越强，知识自动沉淀"
+    ]},
+  { no:"03", name:"场景与流程", short:"流程", moat:"工作流锁定",
+    tip:"看 AI 有没有真嵌进一条业务流程、有人对结果负责。干一次叫玩具，进了 SOP 才算上一级。",
+    levels:[
+      "没有任何 AI 介入的业务流程",
+      "有人偶尔用 AI 干一次（玩具），没进任何流程",
+      "AI 真嵌进 ≥1 条业务流程、进了 SOP、有人对结果负责",
+      "多条端到端流程由 agent 执行，人退到监督位",
+      "流程默认 AI-first 重新设计"
+    ]},
+  { no:"04", name:"人才与能力", short:"人才", moat:"领域专长",
+    tip:"看是一两个高手在撑，还是一线普通员工也会用、招人已按“AI 原生”筛。",
+    levels:[
+      "几乎没人会用，只停在概念",
+      "一两个高手在撑，普通员工不会",
+      "一线普通员工也会用，关键岗位掌握工作流",
+      "出现“超级个体”，一人编排多 agent；招人按“AI 原生”筛",
+      "全员 AI 原生，组织按此标准招聘与培养"
+    ]},
+  { no:"05", name:"激励与文化", short:"激励", moat:"组织决心",
+    tip:"看员工觉得配合 AI 是“给自己挖坟墓”还是“对自己有好处”；考核里有没有给“贡献组织资产”留位置。",
+    levels:[
+      "员工觉得配合 AI 是“给自己挖坟墓”，观望甚至抵触",
+      "鼓励使用，但没机制、没好处",
+      "有培训和试点激励，员工觉得“对自己有好处”",
+      "考核权重给“贡献组织资产”留了位置，激励与 AI 产出对齐",
+      "共创、试错、安全文化成型，贡献 AI 资产是晋升要素"
+    ]},
+  { no:"06", name:"治理与韧性", short:"治理", moat:"工作流锁定",
+    tip:"看敢不敢规模化——权限清不清楚、出错有没有兜底、换个人能不能接着跑。",
+    levels:[
+      "不敢规模化：权限混乱、出错无兜底",
+      "能小范围试，但换个人就跑不起来",
+      "权限基本清晰，关键流程有兜底和负责人",
+      "规模化有治理框架，可观测、可审计、可交接",
+      "治理成熟到敢全面铺开，换人/扩张都能接着跑"
+    ]},
+];
+
+const VERDICTS = [
+  "你还在围观区。AI 是个人零散动作，组织没接住。第一步不是买工具，是让一号位先说出那一句“我们要拿 AI 干什么”。",
+  "你在散点区——有人在用，但停在“玩具”阶段，没进任何流程。L2 到 L3 只有一道分水岭：AI 真嵌进一条业务流程、并且有人对结果负责。",
+  "你到了流程融合——AI 开始在组织里干真活了。瓶颈通常压在最低那一维（多半是激励或治理），补齐它才上得了 L4。",
+  "你已系统化——多场景、人退到监督位。再往上，是把单点能力连成自我增强的数据飞轮和组织默认。",
+  "罕见。AI 已是默认基础设施，组织围绕它重设。此时护城河来自积累的深度——别人砸钱两年也追不上。"
+];
+
+const NEXT_NOTE = {
+  "组织决心":"这一维是“组织愿不愿意”的问题，对应六阶段里的领导示范与激励重构——动作在人和机制，不在工具。",
+  "数据飞轮":"这一维卡住，后面维度再高也是空中楼阁。对应六阶段的知识打捞与结构化——先把经验从脑子里捞出来。",
+  "工作流锁定":"这一维决定 AI 是“玩具”还是“真活”。对应六阶段的流程重构与治理——把 AI 嵌进 SOP、定好兜底。",
+  "领域专长":"这一维是“人会不会”的问题，对应六阶段的能力普及——从一两个高手扩到一线全员。"
+};
+
+/* ===== 以下逻辑一般不用动 ===== */
+
+const COLORS = { teal:'#3A7D6E', dark:'#27574C', weak:'#BD4A2B', gray:'#A7AEA4', line:'#C2C8BC' };
+const form = document.getElementById('quiz');
+const answers = new Array(DIMENSIONS.length).fill(null);
+
+DIMENSIONS.forEach((d, i) => {
+  const fs = document.createElement('fieldset');
+  fs.innerHTML = `
+    <legend>
+      <div class="dim-head">
+        <span class="dim-no">${d.no}</span>
+        <span class="dim-name">${d.name}</span>
+        <span class="dim-current" id="cur-${i}"></span>
+      </div>
+    </legend>
+    <p class="dim-tip">${d.tip}</p>
+    <ul class="levels">
+      ${d.levels.map((txt,j)=>`
+      <li><label class="lvl">
+        <input type="radio" name="dim${i}" value="${j+1}">
+        <span class="tick">L${j+1}</span>
+        <span class="lvl-text">${txt}</span>
+      </label></li>`).join('')}
+    </ul>`;
+  form.appendChild(fs);
+  fs.addEventListener('change', e => {
+    if (e.target.name === `dim${i}`){
+      answers[i] = parseInt(e.target.value,10);
+      document.getElementById('cur-'+i).innerHTML = `当前：<b>L${answers[i]} ${LEVEL_NAMES[answers[i]-1]}</b>`;
+    }
+  });
+});
+
+const result = document.getElementById('result');
+const hint = document.getElementById('hint');
+const resetBtn = document.getElementById('reset');
+
+document.getElementById('run').addEventListener('click', () => {
+  const missing = answers.findIndex(a => a === null);
+  if (missing !== -1){
+    hint.textContent = `还有维度没选（第 ${DIMENSIONS[missing].no} 项）`;
+    document.querySelector(`[name="dim${missing}"]`).closest('fieldset').scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  hint.textContent = '';
+  render();
+});
+
+resetBtn.addEventListener('click', () => {
+  answers.fill(null); form.reset();
+  DIMENSIONS.forEach((_,i)=>document.getElementById('cur-'+i).innerHTML='');
+  result.hidden = true; result.classList.remove('show'); resetBtn.hidden = true;
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+document.getElementById('cta-link').addEventListener('click', e => {
+  e.preventDefault();
+  e.target.textContent = '（把这里换成你的方法论页 / 预约链接）';
+});
+
+function render(){
+  const min = Math.min(...answers);
+  const weakIdx = answers.map((a,i)=>a===min?i:-1).filter(i=>i>=0);
+  document.getElementById('r-level').textContent = min;
+  document.getElementById('r-cap').textContent = LEVEL_NAMES[min-1];
+  document.getElementById('r-barrier').textContent =
+    `你在某些维度也许已经到 L${Math.max(...answers)}，但真实水位被最短的一环拉到 L${min}。`;
+  document.getElementById('r-verdict').textContent = VERDICTS[min-1];
+  document.getElementById('r-weak').textContent = weakIdx.map(i=>DIMENSIONS[i].name).join('、');
+  const keys = [...new Set(weakIdx.map(i=>DIMENSIONS[i].moat))];
+  document.getElementById('r-moat').textContent = keys.map(k=>NEXT_NOTE[k]).join(' ');
+  document.getElementById('r-from').textContent = min;
+  document.getElementById('r-to').textContent = Math.min(min+1,5);
+  drawChart(answers, min, weakIdx);
+  result.hidden = false; resetBtn.hidden = false;
+  void result.offsetWidth; result.classList.add('show');
+  result.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function drawChart(vals, min, weakIdx){
+  const svg = document.getElementById('chart');
+  const base=280, top=40, plotH=base-top, x0=64, x1=560, span=x1-x0, slot=span/DIMENSIONS.length, bw=44;
+  const yFor = lv => base - (lv/5)*plotH;
+  let s='';
+  s+=`<line x1="${x0-14}" y1="${base}" x2="${x1+4}" y2="${base}" stroke="${COLORS.line}" stroke-width="1"/>`;
+  vals.forEach((lv,i)=>{
+    const cx = x0 + slot*i + slot/2, bx = cx - bw/2, by = yFor(lv), h = base - by;
+    const weak = weakIdx.includes(i);
+    const fill = weak ? COLORS.weak : (lv>=3 ? COLORS.teal : COLORS.gray);
+    s+=`<rect class="bar" x="${bx}" y="${by}" width="${bw}" height="${h}" rx="3" fill="${fill}" style="transition-delay:${i*70}ms"/>`;
+    s+=`<text class="bval ${weak?'weak':''}" x="${cx}" y="${by-9}" text-anchor="middle">L${lv}</text>`;
+    s+=`<text class="blabel" x="${cx}" y="${base+22}" text-anchor="middle">${DIMENSIONS[i].short}</text>`;
+  });
+  const yL = yFor(min);
+  s+=`<g class="wline">`;
+  s+=`<line x1="${x0-14}" y1="${yL}" x2="${x1+4}" y2="${yL}" stroke="${COLORS.weak}" stroke-width="1.5" stroke-dasharray="5 4"/>`;
+  s+=`<text class="bval weak" x="${x0-18}" y="${yL+4}" text-anchor="end">水位 L${min}</text>`;
+  s+=`</g>`;
+  svg.innerHTML = s;
+}
+</script>
+</body>
+</html>
