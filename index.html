@@ -195,7 +195,7 @@
       <div class="box sub-row">
         <span class="k">下一次复测前，开始记这四个数</span>
         <ul class="metrics">
-          <li><b>HITL 率</b>：agent 产出里被人复核/改动/推翻的比例（比采纳率诚实，会随时间下降）</li>
+          <li><b>HITL 率</b>（Human-In-The-Loop，人工介入率）：agent 产出里被人复核/改动/推翻的比例（比采纳率诚实，会随时间下降）</li>
           <li><b>返工税</b>：省下的时间里，有多少又花在核对和改 AI 的产出上</li>
           <li><b>节省时间去向</b>：再投入到能力，还是直接变成加活</li>
           <li><b>价值口径</b>：AI 价值是否进了 P&amp;L 或业务 KPI，而不只是“效率提升 X%”</li>
@@ -218,7 +218,7 @@
     <span class="sig">会灵那 · wilingna</span> ｜ 开源「诊断层」 · 数据只在你的浏览器里，不上传<br>
     成熟度模型回答“我现在在哪”，六阶段方法论回答“下一步往哪走”<br>
     <a href="https://github.com/wilingna/ai-native-maturity" target="_blank" rel="noopener">GitHub</a> ·
-    <a href="https://github.com/wilingna/ai-native-maturity/blob/main/docs/evidence-2026.md" target="_blank" rel="noopener">为什么这样设计（2026 研究依据）</a>
+    <a href="https://github.com/wilingna/ai-native-maturity/blob/main/docs/evidence-2026.md" target="_blank" rel="noopener">设计依据</a>
   </footer>
 
 </div>
@@ -263,7 +263,7 @@ const DIMENSIONS = [
       "知识飞轮：每一次人工修正都回流，越用越准"
     ]},
   { no:"03", name:"场景与流程", short:"流程", stage:"③ 重构",
-    tip:"看 AI 是“重新设计了流程”，还是“贴在旧流程上当搜索框”。干一次叫玩具，进了 SOP 才算上一级。诚实指标是 HITL 率，不是采纳率。",
+    tip:"看 AI 是“重新设计了流程”，还是“贴在旧流程上当搜索框”。干一次叫玩具，进了 SOP 才算上一级。诚实指标是 HITL 率（Human-In-The-Loop，人工介入率），不是采纳率。",
     proof:"我有一条流程的 before/after 数字，并且在记录它的 HITL 率（人工复核/改动/推翻的比例）。",
     levels:[
       "没有任何 AI 介入的业务流程",

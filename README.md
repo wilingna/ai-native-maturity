@@ -18,6 +18,8 @@
 
 </div>
 
+<p align="center"><img src="assets/model.png" alt="AI 原生组织成熟度模型 v3：第0问 + 五级六维 + 最短板定级" width="100%"></p>
+
 ---
 
 ## 🎯 TL;DR
@@ -44,7 +46,7 @@ L1 围观 → L2 散点 → ⟍ 价值分水岭 ⟍ → L3 流程融合 → L4 �
 ### The Problem
 Every consultancy has an "AI maturity model." They average six nice-looking scores into one number that makes leadership feel fine — and buries the one dimension that's actually killing the rollout. Averages lie. Chains don't.
 
-The 2026 data agrees: AI is now in almost every company, yet only a small minority report meaningful earnings impact (McKinsey), and organizational factors explain far more of AI's impact than individual ones (Microsoft). The gap is organizational, not technical. → [`docs/evidence-2026.md`](docs/evidence-2026.md)
+The 2026 data agrees: AI is now in almost every company, yet only a small minority see real earnings impact. The gap is organizational, not technical.
 
 ### How it scores
 1. **Question Zero (not scored)** — where does work actually happen?
@@ -58,7 +60,7 @@ Is your organization's **work substrate** IM, meetings, documents, or systems? N
 ### The six dimensions
 1. **Leadership & Direction** — does the boss actually use it, can they say in one line what AI is *for*, and is investment concentrated on 3–4 workflows and tracked in the P&L?
 2. **Knowledge & Data** — is core know-how trapped in people's heads, or structured so *agents* can reach it — with human corrections flowing back in?
-3. **Workflow & Scenarios** — was the workflow *redesigned* around AI (outcome first, then human/agent split), or was AI bolted onto the old one? Honest metric: HITL rate, not adoption rate.
+3. **Workflow & Scenarios** — was the workflow *redesigned* around AI (outcome first, then human/agent split), or was AI bolted onto the old one? Honest metric: **HITL (Human-In-The-Loop) rate** — the share of agent output a human must check, edit or override — not adoption rate.
 4. **Talent & Capability** — one or two heroes, or frontline staff? Are people *asking questions* or *writing specs*? Is workforce planning done for humans *and* agents — while keeping a path for juniors to become experts?
 5. **Incentives & Culture** — "digging my own grave" or "in my interest"? Is reinvention rewarded even when early results are uneven? Where does the saved time go — capability, or just more work?
 6. **Governance & Resilience** — controls before autonomy: owner, observability, approval/rollback gates, audit log, cost guardrails. Plus the lethal-trifecta check and three stress tests: survive a **model swap**, a **vendor exit**, a **single-node failure**?
@@ -77,7 +79,7 @@ Is your organization's **work substrate** IM, meetings, documents, or systems? N
 ### 问题
 人人都有一套"AI 成熟度模型"，把六个好看的分一平均，凑出一个让领导安心的数字——顺手埋掉那个真正在拖垮落地的维度。平均分会撒谎，连环锁不会。
 
-2026 年的数据也在说同一件事：AI 几乎已经进了每家公司，但真正说得出利润贡献的只有少数（麦肯锡）；组织因素对 AI 成效的解释力远高于个人因素（微软）。差距在组织，不在技术。→ [`docs/evidence-2026.md`](docs/evidence-2026.md)
+2026 年的数据也在说同一件事：AI 几乎进了每家公司，但真正赚到钱的只有少数——差距在组织，不在技术。
 
 ### 怎么定级
 1. **第 0 问（不打分）**：你的工作到底发生在哪里？
@@ -96,7 +98,7 @@ Is your organization's **work substrate** IM, meetings, documents, or systems? N
 
 **v3 的关键判据：**
 - **方向**：资源是收拢到 3–4 条核心流程，还是撒胡椒面？AI 价值进没进 P&L？
-- **流程**：是重新设计了流程，还是把 AI 贴在旧流程上？**HITL 率比采纳率诚实。**
+- **流程**：是重新设计了流程，还是把 AI 贴在旧流程上？**HITL 率（Human-In-The-Loop，人工介入率）比采纳率诚实。**
 - **人才**：员工在"提问"还是在"写 spec"？编制规划算没算上 agent？新人还有没有成为专家的路？
 - **激励**：早期结果不稳的尝试被不被奖励？**省下的时间去了哪**——能力，还是加活？
 - **治理**：**先装刹车，再给自主权**——每个 agent 有没有 owner、日志、回滚、成本护栏？致命三要素查了没有？三项韧性测试过不过？
@@ -118,7 +120,7 @@ Is your organization's **work substrate** IM, meetings, documents, or systems? N
 | `docs/work-substrate.md` | 第 0 问：工作基质 |
 | `docs/methodology.md` | 六阶段落地方法论（含治理六件控制、致命三要素、三项韧性测试） |
 | `docs/honest-metrics.md` | 四个诚实指标 + 只追加日志模板 |
-| `docs/evidence-2026.md` | 每个设计背后的 2026 年研究依据 |
+| `docs/evidence-2026.md` | 附录：设计依据与出处（可选读） |
 | `cases/` | 真实落地案例——**这一层才是护城河** |
 | `CHANGELOG.md` | 版本记录 |
 
